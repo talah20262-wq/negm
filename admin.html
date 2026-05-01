@@ -2,63 +2,176 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة تحكم نجم</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الإمبراطور | محمد نجم</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #050505; color: #fff; font-family: 'Segoe UI', sans-serif; }
+        .admin-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; transition: 0.3s; }
+        .admin-card:hover { border-color: #aa771c; }
+        .status-pending { color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 2px 10px; rounded-full: 10px; font-size: 12px; }
+        .receipt-preview { width: 100px; height: 100px; object-fit: cover; border-radius: 12px; cursor: pointer; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white p-10">
-    <h1 class="text-3xl font-bold mb-10">طلبات الدفع المعلقة</h1>
-    <div id="requestsList" class="grid gap-4"></div>
+<body class="p-4 md:p-10">
 
-    <hr class="my-10 border-gray-700">
-    
-    <h1 class="text-3xl font-bold mb-10">إعدادات الموقع</h1>
-    <input id="newPhone" class="bg-gray-800 p-4 rounded w-full mb-4" placeholder="رقم واتساب جديد">
-    <input id="newLogo" class="bg-gray-800 p-4 rounded w-full mb-4" placeholder="اسم اللوجو الجديد">
-    <button onclick="saveSettings()" class="bg-yellow-500 text-black px-10 py-4 rounded font-bold">حفظ التغييرات</button>
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+            <div>
+                <h1 class="text-3xl font-bold italic">M.NAJM <span class="text-yellow-600 text-sm">Dashboard</span></h1>
+                <p class="text-gray-500 text-sm">مرحباً يا نجم، لديك <span id="pending-count" class="text-yellow-500">0</span> طلبات معلقة</p>
+            </div>
+            <button onclick="location.reload()" class="bg-white/5 p-3 rounded-full hover:bg-white/10"><i class="fas fa-sync-alt"></i></button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- قسم طلبات الدفع -->
+            <div class="lg:col-span-2">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-wallet text-yellow-600"></i> طلبات الدفع الجديدة
+                </h2>
+                <div id="requests-container" class="space-y-4">
+                    <!-- الطلبات هتنزل هنا -->
+                    <p class="text-gray-600 italic">جاري تحميل الطلبات...</p>
+                </div>
+            </div>
+
+            <!-- قسم إعدادات الموقع والرسائل -->
+            <div class="space-y-8">
+                <div>
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i class="fas fa-tools text-yellow-600"></i> إعدادات السيطرة
+                    </h2>
+                    <div class="admin-card p-6 space-y-4">
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">رقم واتساب التواصل</label>
+                            <input id="set-phone" type="text" class="w-full bg-black border border-white/10 p-3 rounded-lg text-sm" placeholder="201211056530">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">اسم البراند (Logo)</label>
+                            <input id="set-logo" type="text" class="w-full bg-black border border-white/10 p-3 rounded-lg text-sm" placeholder="M.NAJM">
+                        </div>
+                        <button onclick="updateSettings()" class="w-full bg-yellow-600 text-black font-bold py-3 rounded-lg hover:bg-yellow-500">حفظ الإعدادات</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i class="fas fa-envelope text-yellow-600"></i> أحدث الرسائل
+                    </h2>
+                    <div id="messages-container" class="space-y-3">
+                        <!-- الرسائل هتنزل هنا -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal لعرض صورة الإيصال كبيرة -->
+    <div id="imageModal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4" onclick="this.classList.add('hidden')">
+        <img id="modalImg" src="" class="max-w-full max-height-full rounded-lg shadow-2xl">
+    </div>
 
     <script>
         const DB_URL = "https://talah-c12c5-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
-        async function loadRequests() {
+        // 1. جلب طلبات الدفع
+        async function fetchRequests() {
             const res = await fetch(`${DB_URL}payment_requests.json`);
             const data = await res.json();
-            const list = document.getElementById('requestsList');
-            list.innerHTML = "";
+            const container = document.getElementById('requests-container');
+            container.innerHTML = "";
+            let pendingCount = 0;
+
+            if (!data) {
+                container.innerHTML = "<p class='text-gray-600'>لا توجد طلبات حالياً.</p>";
+                return;
+            }
+
             for (let id in data) {
-                if(data[id].status === 'pending') {
-                    list.innerHTML += `
-                        <div class="bg-gray-800 p-6 rounded-xl flex justify-between items-center">
-                            <div>
-                                <p>المبلغ: ${data[id].amount}</p>
-                                <img src="${data[id].receipt}" class="w-20 h-20 object-cover mt-2 rounded">
+                const req = data[id];
+                if (req.status === 'pending') {
+                    pendingCount++;
+                    container.innerHTML += `
+                        <div class="admin-card p-6 flex flex-wrap md:flex-nowrap justify-between items-center gap-6">
+                            <div class="flex gap-4 items-center">
+                                <img src="${req.receipt}" class="receipt-preview" onclick="viewImage('${req.receipt}')">
+                                <div>
+                                    <div class="font-bold text-lg text-yellow-500">${req.amount}</div>
+                                    <div class="text-xs text-gray-500">${req.time}</div>
+                                    <span class="status-pending italic">ينتظر موافقتك</span>
+                                </div>
                             </div>
-                            <button onclick="approve('${id}')" class="bg-green-600 px-6 py-2 rounded">موافقة وتفعيل</button>
+                            <div class="flex gap-2 w-full md:w-auto">
+                                <button onclick="handleRequest('${id}', 'approved')" class="flex-1 md:flex-none bg-green-600 hover:bg-green-500 px-6 py-2 rounded-lg font-bold">موافقة</button>
+                                <button onclick="handleRequest('${id}', 'rejected')" class="flex-1 md:flex-none bg-red-600/20 text-red-500 hover:bg-red-600 hover:text-white px-6 py-2 rounded-lg">رفض</button>
+                            </div>
                         </div>
                     `;
                 }
             }
+            document.getElementById('pending-count').innerText = pendingCount;
         }
 
-        async function approve(id) {
-            // تحديث الحالة لمقبول واطلب من العميل يدخل بيانات موقعه
+        // 2. الموافقة أو الرفض
+        async function handleRequest(id, newStatus) {
+            if (!confirm(`هل أنت متأكد من ${newStatus === 'approved' ? 'الموافقة على' : 'رفض'} هذا الطلب؟`)) return;
+
             await fetch(`${DB_URL}payment_requests/${id}.json`, {
                 method: 'PATCH',
-                body: JSON.stringify({ status: 'approved' })
+                body: JSON.stringify({ status: newStatus })
             });
-            alert("تم التفعيل! العميل الآن يقدر يدخل بيانات الموقع.");
-            loadRequests();
+
+            alert(newStatus === 'approved' ? "تم التفعيل! العميل هيفتح عنده نموذج البيانات الآن." : "تم رفض الطلب.");
+            fetchRequests();
         }
 
-        async function saveSettings() {
+        // 3. تحديث الإعدادات (رقم الواتساب واللوجو)
+        async function updateSettings() {
             const config = {
-                phone: document.getElementById('newPhone').value,
-                logo: document.getElementById('newLogo').value
+                phone: document.getElementById('set-phone').value,
+                logo: document.getElementById('set-logo').value
             };
+            if (!config.phone || !config.logo) return alert("املا البيانات يا نجم");
+
             await fetch(`${DB_URL}config.json`, { method: 'PUT', body: JSON.stringify(config) });
-            alert("تم تحديث إعدادات الموقع");
+            alert("تم التحديث بنجاح في الموقع الرئيسي!");
         }
 
-        loadRequests();
+        // 4. جلب الرسائل
+        async function fetchMessages() {
+            const res = await fetch(`${DB_URL}messages.json`);
+            const data = await res.json();
+            const container = document.getElementById('messages-container');
+            container.innerHTML = "";
+
+            if (data) {
+                Object.values(data).reverse().slice(0, 5).forEach(m => {
+                    container.innerHTML += `
+                        <div class="admin-card p-4 text-sm">
+                            <div class="font-bold text-yellow-600">${m.name} <span class="text-gray-600 font-normal text-[10px] tracking-tighter">${m.phone}</span></div>
+                            <p class="text-gray-400 mt-1">${m.msg}</p>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function viewImage(src) {
+            document.getElementById('modalImg').src = src;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        // تشغيل الوظائف عند الفتح
+        fetchRequests();
+        fetchMessages();
+        // تحديث تلقائي كل 30 ثانية للطلبات الجديدة
+        setInterval(fetchRequests, 30000);
     </script>
 </body>
 </html>
