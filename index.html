@@ -3,138 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محمد نجم | خبير المتاجر الإلكترونية</title>
+    <title>M.NAJM | Professional Web Solutions</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --noon-yellow: #feee00; --noon-black: #404040; }
-        body { background-color: #f7f7f7; font-family: 'Segoe UI', sans-serif; }
-        .noon-gradient { background: linear-gradient(90deg, #feee00 0%, #fff133 100%); }
-        .card-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        body { background-color: #0a0a0a; color: #e5e5e5; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-gold { background: linear-gradient(45deg, #d4af37, #f9d71c); color: black; }
+        .admin-gear { position: fixed; bottom: 20px; left: 20px; font-size: 24px; color: #333; cursor: pointer; transition: 0.3s; }
+        .admin-gear:hover { color: #d4af37; transform: rotate(90deg); }
     </style>
 </head>
 <body>
 
-    <!-- Header / Navbar -->
-    <nav class="noon-gradient p-4 sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <div id="site-logo" class="text-2xl font-bold text-black">M.NAJM</div>
-            <div class="hidden md:flex gap-6 font-semibold">
-                <a href="#about">من أنا</a>
-                <a href="#prices">الأسعار</a>
-                <a href="#contact">تواصل معي</a>
-            </div>
-            <a href="https://wa.me/201211056530" class="bg-black text-white px-4 py-2 rounded-full text-sm">واتساب</a>
+    <!-- Header -->
+    <nav class="p-6 flex justify-between items-center border-b border-white/10">
+        <div class="text-2xl font-black tracking-tighter text-white">M.NAJM<span class="text-yellow-500">.</span></div>
+        <div class="flex gap-4">
+            <a href="https://wa.me/201211056530" class="text-sm border border-white/20 px-4 py-2 rounded-lg">تواصل مباشر</a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="bg-white py-20 px-4 text-center">
-        <div class="container mx-auto">
-            <div class="inline-block bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full text-sm font-bold mb-4">خبرة 3 سنوات +</div>
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-6">محمد أحمد نجم</h1>
-            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">صانع ويب ومسوق إلكتروني بنتائج خرافية. صممت أكثر من 40 متجراً و 50 موقعاً احترافياً.</p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="#contact" class="bg-black text-white px-8 py-3 rounded-lg font-bold">اطلب موقعك الآن</a>
-                <a href="https://facebook.com" class="border-2 border-black px-8 py-3 rounded-lg font-bold">صفحة الفيسبوك</a>
-            </div>
+    <!-- Hero -->
+    <section class="py-20 text-center px-4">
+        <h1 class="text-5xl font-extrabold text-white mb-4">صناعة المتاجر بذكاء</h1>
+        <p class="text-gray-400 max-w-xl mx-auto">خبرة 3 سنوات في بناء أكثر من 90 مشروعاً رقمياً ناجحاً.</p>
+    </section>
+
+    <!-- Plans -->
+    <section class="container mx-auto grid md:grid-cols-2 gap-8 px-6 pb-20">
+        <div class="glass-card p-8 rounded-3xl text-center">
+            <h3 class="text-xl font-bold mb-2">المتجر العادي</h3>
+            <div class="text-3xl font-black text-yellow-500 mb-6">200 ج / شهرياً</div>
+            <button onclick="payFlow('200 ج')" class="btn-gold w-full py-4 rounded-xl font-bold uppercase tracking-wider">ادفع واشترك الآن</button>
+        </div>
+        <div class="glass-card p-8 rounded-3xl text-center border-yellow-500/50 border-2">
+            <h3 class="text-xl font-bold mb-2">العرض السنوي</h3>
+            <div class="text-3xl font-black text-yellow-500 mb-6">2000 ج / سنوياً</div>
+            <button onclick="payFlow('2000 ج')" class="btn-gold w-full py-4 rounded-xl font-bold uppercase tracking-wider">ادفع واشترك الآن</button>
         </div>
     </section>
 
-    <!-- Statistics -->
-    <section class="noon-gradient py-10 border-y border-yellow-300">
-        <div class="container mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center font-bold">
-            <div><div class="text-3xl">40+</div><div>متجر إلكتروني</div></div>
-            <div><div class="text-3xl">50+</div><div>ويب سايت</div></div>
-            <div><div class="text-3xl">3</div><div>سنوات خبرة</div></div>
-            <div><div class="text-3xl">100%</div><div>نتائج خرافية</div></div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="prices" class="py-20 px-4">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">عروض "نجم" الحصرية 🌟</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Free Offer -->
-                <div class="bg-white p-8 rounded-2xl card-shadow border-t-4 border-green-500">
-                    <h3 class="text-xl font-bold mb-4">عرض البداية</h3>
-                    <div class="text-4xl font-black mb-4">مجاناً <span class="text-sm text-gray-400">/ لمدة أسبوع</span></div>
-                    <ul class="text-gray-600 space-y-2 mb-8">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>تجربة كاملة للمتجر</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>لوحة تحكم كاملة</li>
-                    </ul>
-                    <button class="w-full bg-green-500 text-white py-3 rounded-lg font-bold">جرب الآن</button>
-                </div>
-                <!-- Monthly -->
-                <div class="bg-black text-white p-8 rounded-2xl card-shadow scale-105">
-                    <h3 class="text-xl font-bold mb-4">المتجر العادي</h3>
-                    <div class="text-4xl font-black mb-4">200 ج <span class="text-sm text-gray-400">/ شهرياً</span></div>
-                    <ul class="text-gray-400 space-y-2 mb-8">
-                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>استضافة صاروخية</li>
-                        <li><i class="fas fa-check text-yellow-400 mr-2"></i>دعم فني متواصل</li>
-                    </ul>
-                    <button class="w-full bg-yellow-400 text-black py-3 rounded-lg font-bold">اشترك شهرياً</button>
-                </div>
-                <!-- Yearly -->
-                <div class="bg-white p-8 rounded-2xl card-shadow border-t-4 border-black">
-                    <h3 class="text-xl font-bold mb-4">الخيار الذكي</h3>
-                    <div class="text-4xl font-black mb-4">2000 ج <span class="text-sm text-gray-400">/ سنوياً</span></div>
-                    <ul class="text-gray-600 space-y-2 mb-8">
-                        <li><i class="fas fa-check text-black mr-2"></i>توفير 400 جنيهاً</li>
-                        <li><i class="fas fa-check text-black mr-2"></i>دومين مجاني (.com)</li>
-                    </ul>
-                    <button class="w-full bg-black text-white py-3 rounded-lg font-bold">احصل على الخصم</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Form -->
-    <section id="contact" class="py-20 bg-gray-100 px-4">
-        <div class="max-w-xl mx-auto bg-white p-10 rounded-3xl card-shadow">
-            <h2 class="text-2xl font-bold mb-6 text-center">أرسل رسالة لـ "نجم"</h2>
-            <form id="contactForm" class="space-y-4">
-                <input type="text" id="senderName" placeholder="اسمك الكريم" class="w-full p-4 border rounded-xl" required>
-                <input type="tel" id="senderPhone" placeholder="رقم هاتفك" class="w-full p-4 border rounded-xl" required>
-                <textarea id="senderMsg" placeholder="ما هو مشروعك القادم؟" class="w-full p-4 border rounded-xl h-32" required></textarea>
-                <button type="submit" class="w-full bg-yellow-400 text-black font-bold py-4 rounded-xl">إرسال الطلب</button>
-            </form>
-        </div>
-    </section>
-
-    <footer class="bg-black text-gray-500 py-10 text-center">
-        <p>© 2026 محمد نجم - جميع الحقوق محفوظة لبراند طلة</p>
-    </footer>
+    <!-- Hidden Admin Gear -->
+    <div class="admin-gear" onclick="adminLogin()"><i class="fas fa-cog"></i></div>
 
     <script>
         const DB_URL = "https://talah-c12c5-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
-        // إرسال رسالة لفايربيز
-        document.getElementById('contactForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const data = {
-                name: document.getElementById('senderName').value,
-                phone: document.getElementById('senderPhone').value,
-                msg: document.getElementById('senderMsg').value,
-                date: new Date().toLocaleString()
-            };
+        // 1. نظام الدفع (Orange Cash)
+        async function payFlow(amount) {
+            const { value: file } = await Swal.fire({
+                title: 'بوابة الدفع السريع',
+                html: `<div class="text-right text-sm">
+                    1. حول مبلغ <b>${amount}</b> لرقم أورنج كاش: <br>
+                    <center><b class="text-xl text-orange-500">01206561893</b></center><br>
+                    2. بعد التحويل، ارفع صورة إيصال الدفع (سكرين شوت) هنا:
+                </div>`,
+                input: 'file',
+                inputAttributes: { 'accept': 'image/*', 'aria-label': 'ارفع صورة الوصل' },
+                confirmButtonText: 'إرسال الوصل للمراجعة',
+                confirmButtonColor: '#d4af37'
+            });
 
-            await fetch(`${DB_URL}orders.json`, { method: 'POST', body: JSON.stringify(data) });
-            alert("تم إرسال رسالتك يا بطل! نجم هيتصل بيك فوراً.");
-            e.target.reset();
-        };
-
-        // جلب البيانات من لوحة التحكم
-        async function loadConfig() {
-            const res = await fetch(`${DB_URL}config.json`);
-            const config = await res.json();
-            if(config) {
-                if(config.phone) document.querySelector('[href*="wa.me"]').href = `https://wa.me/20${config.phone}`;
-                if(config.logo) document.getElementById('site-logo').innerText = config.logo;
+            if (file) {
+                // هنا بنرفع البيانات لفايربيز (إشعار للأونر)
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    await fetch(`${DB_URL}payment_requests.json`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            amount: amount,
+                            receipt: e.target.result, // الصورة Base64
+                            status: 'pending',
+                            time: new Date().toLocaleString()
+                        })
+                    });
+                    Swal.fire('تم الإرسال', 'في انتظار الموافقة من الأونر (محمد نجم)... ستحصل على إشعار فور التفعيل.', 'success');
+                };
+                reader.readAsDataURL(file);
             }
         }
-        loadConfig();
+
+        // 2. نظام المالك (Login)
+        async function adminLogin() {
+            const { value: password } = await Swal.fire({
+                title: 'دخول المالك',
+                input: 'password',
+                inputPlaceholder: 'أدخل كلمة السر',
+                confirmButtonText: 'دخول'
+            });
+
+            if (password === "najm2026") { // غير كلمة السر دي براحتك
+                window.location.href = "admin.html"; // هيحولك لصفحة الإدارة
+            } else {
+                Swal.fire('خطأ', 'كلمة سر غير صحيحة يا إمبراطور', 'error');
+            }
+        }
     </script>
 </body>
 </html>
