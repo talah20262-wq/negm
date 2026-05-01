@@ -1,0 +1,19 @@
+<!-- Admin Panel Simplified -->
+<div style="max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
+    <h2>لوحة تحكم محمد نجم</h2>
+    <input type="text" id="newLogo" placeholder="اسم اللوجو الجديد"><br><br>
+    <input type="text" id="newPhone" placeholder="رقم الواتساب الجديد"><br><br>
+    <button onclick="updateData()">تحديث الموقع فوراً</button>
+</div>
+
+<script>
+    async function updateData() {
+        const url = "https://talah-c12c5-default-rtdb.asia-southeast1.firebasedatabase.app/config.json";
+        const data = {
+            logo: document.getElementById('newLogo').value,
+            phone: document.getElementById('newPhone').value
+        };
+        await fetch(url, { method: 'PUT', body: JSON.stringify(data) });
+        alert("تم تحديث البيانات بنجاح!");
+    }
+</script>
