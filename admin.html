@@ -1,19 +1,64 @@
-<!-- Admin Panel Simplified -->
-<div style="max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
-    <h2>لوحة تحكم محمد نجم</h2>
-    <input type="text" id="newLogo" placeholder="اسم اللوجو الجديد"><br><br>
-    <input type="text" id="newPhone" placeholder="رقم الواتساب الجديد"><br><br>
-    <button onclick="updateData()">تحديث الموقع فوراً</button>
-</div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم نجم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-10">
+    <h1 class="text-3xl font-bold mb-10">طلبات الدفع المعلقة</h1>
+    <div id="requestsList" class="grid gap-4"></div>
 
-<script>
-    async function updateData() {
-        const url = "https://talah-c12c5-default-rtdb.asia-southeast1.firebasedatabase.app/config.json";
-        const data = {
-            logo: document.getElementById('newLogo').value,
-            phone: document.getElementById('newPhone').value
-        };
-        await fetch(url, { method: 'PUT', body: JSON.stringify(data) });
-        alert("تم تحديث البيانات بنجاح!");
-    }
-</script>
+    <hr class="my-10 border-gray-700">
+    
+    <h1 class="text-3xl font-bold mb-10">إعدادات الموقع</h1>
+    <input id="newPhone" class="bg-gray-800 p-4 rounded w-full mb-4" placeholder="رقم واتساب جديد">
+    <input id="newLogo" class="bg-gray-800 p-4 rounded w-full mb-4" placeholder="اسم اللوجو الجديد">
+    <button onclick="saveSettings()" class="bg-yellow-500 text-black px-10 py-4 rounded font-bold">حفظ التغييرات</button>
+
+    <script>
+        const DB_URL = "https://talah-c12c5-default-rtdb.asia-southeast1.firebasedatabase.app/";
+
+        async function loadRequests() {
+            const res = await fetch(`${DB_URL}payment_requests.json`);
+            const data = await res.json();
+            const list = document.getElementById('requestsList');
+            list.innerHTML = "";
+            for (let id in data) {
+                if(data[id].status === 'pending') {
+                    list.innerHTML += `
+                        <div class="bg-gray-800 p-6 rounded-xl flex justify-between items-center">
+                            <div>
+                                <p>المبلغ: ${data[id].amount}</p>
+                                <img src="${data[id].receipt}" class="w-20 h-20 object-cover mt-2 rounded">
+                            </div>
+                            <button onclick="approve('${id}')" class="bg-green-600 px-6 py-2 rounded">موافقة وتفعيل</button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        async function approve(id) {
+            // تحديث الحالة لمقبول واطلب من العميل يدخل بيانات موقعه
+            await fetch(`${DB_URL}payment_requests/${id}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status: 'approved' })
+            });
+            alert("تم التفعيل! العميل الآن يقدر يدخل بيانات الموقع.");
+            loadRequests();
+        }
+
+        async function saveSettings() {
+            const config = {
+                phone: document.getElementById('newPhone').value,
+                logo: document.getElementById('newLogo').value
+            };
+            await fetch(`${DB_URL}config.json`, { method: 'PUT', body: JSON.stringify(config) });
+            alert("تم تحديث إعدادات الموقع");
+        }
+
+        loadRequests();
+    </script>
+</body>
+</html>
